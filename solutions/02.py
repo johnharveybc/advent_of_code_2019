@@ -19,7 +19,7 @@ def part_1(input_file):
     intcode.set_reg_val(1, 12)
     intcode.set_reg_val(2, 2)
 
-    intcode.run_intcode()
+    intcode.run()
 
     return intcode.get_reg_val(0)
 
@@ -30,7 +30,7 @@ def part_2(input_file):
             intcode = IntCode(input_file)
             intcode.set_reg_val(1, i)
             intcode.set_reg_val(2, j)
-            intcode.run_intcode()
+            intcode.run()
             if intcode.get_reg_val(0) == 19690720:
                 return 100*i + j
 
