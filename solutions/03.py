@@ -16,8 +16,10 @@ def main():
     intersections = set.intersection(*map(set, wires))
 
     sol_1 = min([sum(map(abs, intersection)) for intersection in intersections])
+    sol_2 = min([sum([wire.index(intersection) + 1 for wire in wires]) for intersection in intersections])
 
     print(f"The solution to part 1 is {sol_1}.")
+    print(f"The solution to part 2 is {sol_2}.")
 
 
 def wire_from_steps(steps):
@@ -30,6 +32,7 @@ def wire_from_steps(steps):
             position = tuple(map(sum, zip(position, direction)))
             wire.append(position)
     return wire
+
 
 if __name__ == '__main__':
     main()
