@@ -26,6 +26,14 @@ class IntCode:
                 self._inp(modes)
             elif opcode == 4:
                 self._out(modes)
+            elif opcode == 5:
+                self._jeq(modes)
+            elif opcode == 6:
+                self._jnq(modes)
+            elif opcode == 7:
+                self._slt(modes)
+            elif opcode == 8:
+                self._seq(modes)
             elif opcode == 99:
                 break
             else:
@@ -69,6 +77,42 @@ class IntCode:
         output = self._get_param(self._addr + 1, modes[0])
         print(f"Outputting a value! The value is {output}!")
         self._addr += 2
+
+    def _jeq(self, modes):
+        param_1 = self._get_param(self._addr + 1, modes[0])
+        param_2 = self._get_param(self._addr + 2, modes[1])
+        if param_1:
+            self._addr = param_2
+        else:
+            self._addr += 3
+
+    def _jnq(self, modes):
+        param_1 = self._get_param(self._addr + 1, modes[0])
+        param_2 = self._get_param(self._addr + 2, modes[1])
+        if param_1 == 0:
+            self._addr = param_2
+        else:
+            self._addr += 3
+
+    def _slt(self, modes):
+        param_1 = self._get_param(self._addr + 1, modes[0])
+        param_2 = self._get_param(self._addr + 2, modes[1])
+        write_addr = self._get_write_addr(self._addr + 3)
+        if param_1 < param_2:
+            self.set_reg_val(write_addr, 1)
+        else:
+            self.set_reg_val(write_addr, 0)
+        self._addr += 4
+
+    def _seq(self, modes):
+        param_1 = self._get_param(self._addr + 1, modes[0])
+        param_2 = self._get_param(self._addr + 2, modes[1])
+        write_addr = self._get_write_addr(self._addr + 3)
+        if param_1 == param_2:
+            self.set_reg_val(write_addr, 1)
+        else:
+            self.set_reg_val(write_addr, 0)
+        self._addr += 4
 
     def _get_param(self, addr, mode):
         if mode == 1:
