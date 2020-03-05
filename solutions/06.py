@@ -1,10 +1,10 @@
 class Tree:
     def __init__(self, node_pairs):
-        self._tree_dict = {}
         root_node = Node('COM')
         root_node.set_parent(None)
         root_node.set_depth(0)
-        self._tree_dict['COM'] = root_node
+
+        self._tree_dict = {'COM': root_node}
 
         for node_pair in node_pairs:
             node = Node(node_pair[1])
@@ -17,13 +17,27 @@ class Tree:
     def _set_depth(self, node):
         if node.get_depth() >= 0:
             return
+
         parent_node = self._tree_dict[node.get_parent()]
+
         if parent_node.get_depth() < 0:
             self._set_depth(parent_node)
+
         node.set_depth(parent_node.get_depth() + 1)
 
     def get_total_tree_depth(self):
         return sum([node.get_depth() for node in self._tree_dict.values()])
+
+    def get_branch(self, node_name):
+        parent_name = self._tree_dict[node_name].get_parent()
+
+        if not parent_name:
+            return [node_name]
+
+        branch = self.get_branch(parent_name)
+        branch.append(node_name)
+
+        return branch
 
 
 class Node:
@@ -59,6 +73,20 @@ def main():
     part_1 = orbit_tree.get_total_tree_depth()
 
     print(f"The solution to part 1 is {part_1}.")
+
+    you_branch = orbit_tree.get_branch('YOU')
+    san_branch = orbit_tree.get_branch('SAN')
+
+    common_branch = [node[0] for node in
+                     zip(you_branch, san_branch)
+                     if node[0] == node[1]]
+
+    you_transfers = len(you_branch) - len(common_branch) - 1
+    san_transfers = len(san_branch) - len(common_branch) - 1
+
+    part_2 = you_transfers + san_transfers
+
+    print(f"The solution to part 2 is {part_2}.")
 
 
 if __name__ == '__main__':
