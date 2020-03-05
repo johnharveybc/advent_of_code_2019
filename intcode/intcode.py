@@ -1,20 +1,21 @@
 class IntCode:
-    def __init__(self, input_file, inputs=None):
+    def __init__(self, registers, inputs=None):
         self._addr = 0
         self._input_addr = 0
+        self._run = True
 
         if inputs is None:
             self._inputs = []
         else:
             self._inputs = inputs
 
-        with open(input_file, 'r') as fh:
-            reg_vals = list(map(int, fh.readline().split(',')))
-            reg_addrs = list(range(len(reg_vals)))
-            self.regs = dict(zip(reg_addrs, reg_vals))
+        register_addresses = list(range(len(registers)))
+        self._registers = dict(zip(register_addresses, registers))
 
     def run(self):
-        while True:
+        self._run = True
+
+        while self._run:
             opcode = self._get_opcode()
             modes = self._get_modes()
 
@@ -25,7 +26,8 @@ class IntCode:
             elif opcode == 3:
                 self._inp(modes)
             elif opcode == 4:
-                self._out(modes)
+                output = self._out(modes)
+                return output
             elif opcode == 5:
                 self._jeq(modes)
             elif opcode == 6:
@@ -41,10 +43,10 @@ class IntCode:
                 break
 
     def set_reg_val(self, addr, val):
-        self.regs[addr] = val
+        self._registers[addr] = val
 
     def get_reg_val(self, addr):
-        return self.regs[addr]
+        return self._registers[addr]
 
     def _get_opcode(self):
         return self.get_reg_val(self._addr) % 100
@@ -75,8 +77,9 @@ class IntCode:
 
     def _out(self, modes):
         output = self._get_param(self._addr + 1, modes[0])
-        print(f"Outputting a value! The value is {output}!")
         self._addr += 2
+        self._run = False
+        return output
 
     def _jeq(self, modes):
         param_1 = self._get_param(self._addr + 1, modes[0])
@@ -116,10 +119,10 @@ class IntCode:
 
     def _get_param(self, addr, mode):
         if mode == 1:
-            return self.regs[addr]
+            return self._registers[addr]
         elif mode == 0:
-            addr = self.regs[addr]
-            return self.regs[addr]
+            addr = self._registers[addr]
+            return self._registers[addr]
 
     def _get_write_addr(self, addr):
-        return self.regs[addr]
+        return self._registers[addr]
