@@ -14,10 +14,13 @@ def main():
 
 
 def part_1(input_file):
-    intcode = IntCode(input_file)
+    with open(input_file, 'r') as fh:
+        registers = list(map(int, fh.readline().split(',')))
 
-    intcode.set_reg_val(1, 12)
-    intcode.set_reg_val(2, 2)
+    registers[1] = 12
+    registers[2] = 2
+
+    intcode = IntCode(registers)
 
     intcode.run()
 
@@ -25,11 +28,14 @@ def part_1(input_file):
 
 
 def part_2(input_file):
+    with open(input_file, 'r') as fh:
+        registers = list(map(int, fh.readline().split(',')))
+
     for i in range(100):
+        registers[1] = i
         for j in range(100):
-            intcode = IntCode(input_file)
-            intcode.set_reg_val(1, i)
-            intcode.set_reg_val(2, j)
+            registers[2] = j
+            intcode = IntCode(registers)
             intcode.run()
             if intcode.get_reg_val(0) == 19690720:
                 return 100*i + j
